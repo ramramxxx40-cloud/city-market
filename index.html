@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1769aa">
+<link rel="manifest" href="manifest.webmanifest">
+<title>سوق المدينة | City Market</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#17212b;background:#f3f6fa}
+*{box-sizing:border-box}body{margin:0}header{background:#1769aa;color:white;padding:18px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:2}
+h1{font-size:1.25rem;margin:0}select,button,input{font:inherit}select{padding:8px;border:0;border-radius:10px}
+main{max-width:720px;margin:auto;padding:16px}.panel{background:#fff;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px #16324b12}
+.hero{text-align:center;padding:28px 16px}.logo{font-size:60px}.muted{color:#657484;font-size:.9rem}
+.actions{display:grid;gap:12px;margin-top:20px}.btn{border:0;border-radius:12px;padding:13px 16px;background:#1769aa;color:#fff;font-weight:700;cursor:pointer}.btn.green{background:#18834b}.btn.light{background:#e7f0f8;color:#14588f}.btn.red{background:#a72c36}.hidden{display:none!important}
+input{width:100%;padding:12px;border:1px solid #d4dde6;border-radius:10px;margin:6px 0 12px;background:white}
+label{font-weight:650;font-size:.92rem}.product{display:flex;align-items:center;gap:12px}.product-icon{width:54px;height:54px;border-radius:14px;background:#e7f0f8;display:grid;place-items:center;font-size:26px;flex-shrink:0}.grow{flex:1;min-width:0}.product h3{margin:0 0 4px;font-size:1rem}.price{color:#168149;font-weight:800}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button{flex:1;min-width:100px}.note{background:#fff8e5;border:1px solid #f1d88b;padding:12px;border-radius:12px;font-size:.88rem;line-height:1.6}.empty{text-align:center;color:#657484;padding:30px 8px}
+</style>
+</head>
+<body>
+<header><h1 id="appTitle">سوق المدينة</h1><select id="language" aria-label="Language"><option value="ar">العربية</option><option value="en">English</option><option value="ku_SO">سۆرانی</option><option value="ku_BA">بادینی</option></select></header>
+<main>
+<section id="home" class="panel hero">
+<div class="logo">🏪</div><h2 id="welcome">أهلاً بك في سوق المدينة</h2><p class="muted" id="intro">نسخة أولية مجانية للتجربة على الموبايل</p>
+<div class="actions"><button class="btn" id="buyerBtn">🛍️ أنا مشتري</button><button class="btn green" id="sellerBtn">🏬 صاحب محل</button></div>
+</section>
+<section id="buyer" class="hidden">
+<div class="tabs"><button class="btn light" data-home>← <span data-t="home">الرئيسية</span></button><button class="btn" id="refreshBtn">↻ <span data-t="refresh">تحديث</span></button></div>
+<div class="panel"><label for="search" data-t="searchLabel">ابحث عن منتج أو محل</label><input id="search" placeholder="ابحث..." autocomplete="off"></div>
+<div id="products"></div>
+</section>
+<section id="seller" class="hidden">
+<div class="tabs"><button class="btn light" data-home>← <span data-t="home">الرئيسية</span></button></div>
+<div class="panel"><h2 data-t="addProduct">إضافة منتج</h2>
+<form id="productForm">
+<label for="shop" data-t="shopName">اسم المحل</label><input id="shop" required maxlength="80">
+<label for="name" data-t="productName">اسم المنتج</label><input id="name" required maxlength="100">
+<label for="price" data-t="price">السعر بالدولار</label><input id="price" type="number" min="0" step="0.01" required>
+<button class="btn green" style="width:100%" type="submit" data-t="save">حفظ المنتج</button>
+</form></div>
+<div class="note" id="storageNote">هذه نسخة تجريبية: تُحفظ المنتجات على هذا الهاتف فقط. المزامنة بين هاتفين سنضيفها لاحقًا.</div>
+</section>
+</main>
+<script>
+const translations={
+ar:{title:'سوق المدينة',welcome:'أهلاً بك في سوق المدينة',intro:'نسخة أولية مجانية للتجربة على الموبايل',buyer:'🛍️ أنا مشتري',seller:'🏬 صاحب محل',home:'الرئيسية',refresh:'تحديث',searchLabel:'ابحث عن منتج أو محل',search:'ابحث...',addProduct:'إضافة منتج',shopName:'اسم المحل',productName:'اسم المنتج',price:'السعر بالدولار',save:'حفظ المنتج',empty:'لا توجد منتجات بعد. أضف أول منتج من صفحة صاحب المحل.',saved:'تم حفظ المنتج على هذا الهاتف.',storage:'هذه نسخة تجريبية: تُحفظ المنتجات على هذا الهاتف فقط. المزامنة بين هاتفين سنضيفها لاحقًا.'},
+en:{title:'City Market',welcome:'Welcome to City Market',intro:'Free starter version for trying on your phone',buyer:'🛍️ I am a Buyer',seller:'🏬 Shop Owner',home:'Home',refresh:'Refresh',searchLabel:'Search products or shops',search:'Search...',addProduct:'Add a product',shopName:'Shop name',productName:'Product name',price:'Price in USD',save:'Save product',empty:'No products yet. Add one from the shop owner page.',saved:'Product saved on this phone.',storage:'Demo version: products are stored on this phone only. We can add two-phone sync later.'},
+ku_SO:{title:'بازاڕی شار',welcome:'بەخێربێیت بۆ بازاڕی شار',intro:'وەشانی سەرەتایی بۆ تاقیکردنەوە لە مۆبایل',buyer:'🛍️ من کڕیارم',seller:'🏬 خاوەن دوکان',home:'سەرەتا',refresh:'نوێکردنەوە',searchLabel:'گەڕان بۆ بەرهەم یان دوکان',search:'گەڕان...',addProduct:'زیادکردنی بەرهەم',shopName:'ناوی دوکان',productName:'ناوی بەرهەم',price:'نرخ بە دۆلار',save:'پاشەکەوتکردن',empty:'هێشتا بەرهەم نییە.',saved:'بەرهەم لەم مۆبایلە پاشەکەوت کرا.',storage:'ئەمە وەشانێکی تاقیکارییە؛ زانیارییەکان تەنها لەم مۆبایلە پاشەکەوت دەبن.'},
+ku_BA:{title:'بازارێ باژێری',welcome:'بەخێر هاتی بۆ بازارێ باژێری',intro:'وەشانی سەرەتایی بۆ تاقیکرنەوە ل مۆبایل',buyer:'🛍️ ئەز مشتەری مە',seller:'🏬 خودانێ دوکانێ',home:'سەرەتا',refresh:'نوێکرنەوە',searchLabel:'ل بەرهەم یان دوکان بگەڕێ',search:'گەڕان...',addProduct:'بەرهەمی زێدە بکە',shopName:'ناڤێ دوکانێ',productName:'ناڤێ بەرهەمی',price:'بها ب دۆلاران',save:'پاشکەفت بکە',empty:'هێشتا بەرهەم نینە.',saved:'بەرهەم ل ڤی مۆبایلی هاتە پاشکەفتکرن.',storage:'ئەڤە وەشانەکا تاقیکارییە؛ زانیاری تەنێ ل ڤی مۆبایلی دەمینن.'}
+};
+let lang='ar', products=[];
+const $=id=>document.getElementById(id);
+function load(){try{products=JSON.parse(localStorage.getItem('cityMarketProducts')||'[]')}catch{products=[]}}
+function save(){localStorage.setItem('cityMarketProducts',JSON.stringify(products))}
+function t(k){return (translations[lang]||translations.ar)[k]||k}
+function applyLang(){document.documentElement.lang=lang==='ar'?'ar':lang==='en'?'en':'ku';document.documentElement.dir=lang==='en'?'ltr':'rtl';
+$('appTitle').textContent=t('title');$('welcome').textContent=t('welcome');$('intro').textContent=t('intro');$('buyerBtn').textContent=t('buyer');$('sellerBtn').textContent=t('seller');$('search').placeholder=t('search');$('storageNote').textContent=t('storage');
+document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));renderProducts()}
+function show(which){['home','buyer','seller'].forEach(id=>$(id).classList.toggle('hidden',id!==which));if(which==='buyer')renderProducts()}
+function renderProducts(){const q=$('search').value.toLowerCase();const list=products.filter(p=>(p.name+' '+p.shop).toLowerCase().includes(q));$('products').innerHTML='';
+if(!list.length){$('products').innerHTML='<div class="panel empty">'+t('empty')+'</div>';return}
+list.forEach(p=>{const card=document.createElement('div');card.className='panel product';const icon=document.createElement('div');icon.className='product-icon';icon.textContent='🛍️';const info=document.createElement('div');info.className='grow';const h=document.createElement('h3');h.textContent=p.name;const shop=document.createElement('div');shop.className='muted';shop.textContent=t('shopName')+': '+p.shop;const price=document.createElement('div');price.className='price';price.textContent='$'+Number(p.price).toFixed(2);info.append(h,shop,price);card.append(icon,info);$('products').append(card)})}
+$('language').addEventListener('change',e=>{lang=e.target.value;applyLang()});
+$('buyerBtn').onclick=()=>show('buyer');$('sellerBtn').onclick=()=>show('seller');document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('home'));
+$('refreshBtn').onclick=()=>{load();renderProducts()};$('search').addEventListener('input',renderProducts);
+$('productForm').addEventListener('submit',e=>{e.preventDefault();const shop=$('shop').value.trim(),name=$('name').value.trim(),price=Number($('price').value);if(!shop||!name||!Number.isFinite(price)||price<0)return;products.unshift({shop,name,price,createdAt:Date.now()});save();$('name').value='';$('price').value='';alert(t('saved'))});
+load();applyLang();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>

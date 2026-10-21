@@ -1,0 +1,10 @@
+{
+  "name": "City Market",
+  "short_name": "City Market",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f6fa",
+  "theme_color": "#1769aa",
+  "description": "City Market mobile starter app",
+  "icons": []
+}
